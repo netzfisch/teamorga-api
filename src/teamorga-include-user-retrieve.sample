@@ -1,0 +1,9 @@
+{
+  id: 123,
+  name: "Hans-Peter Schmidt",
+  birthday: "0000-00-00",
+  phone: "+49-40-1234567",
+  email: "hps@teamorga.com",
+  shirt_number: 10,
+  valid_until: "0000-00-00"
+}

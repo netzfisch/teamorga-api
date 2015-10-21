@@ -1,0 +1,22 @@
+[
+  {
+    id: 123,
+    recurrence_id: 123,
+    recurrence_name: "Training",
+    user_id: 123,
+    user_name: "Hans-Peter Schmidt",
+    body: "Lorem Ipsum dolor sit amet ...",
+    created_at: "0000-00-00 00:00:00",
+    updated_at: "0000-00-00 00:00:00"
+  },
+  {
+    id: 123,
+    recurrence_id: 123,
+    recurrence_name: "Training",
+    user_id: 123,
+    user_name: "Hans-Peter Schmidt",
+    body: "Lorem Ipsum dolor sit amet ...",
+    created_at: "0000-00-00 00:00:00",
+    updated_at: "0000-00-00 00:00:00"
+  }
+]

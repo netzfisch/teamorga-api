@@ -1,0 +1,10 @@
+[
+  {
+    id: 123,
+    name: "First Team"
+  },
+  {
+    id: 123,
+    name: "Second Team"
+  }
+]

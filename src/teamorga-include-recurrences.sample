@@ -1,0 +1,44 @@
+[
+  {
+    id: 123,
+    scheduled_to: "0000-00-00 00:00:00",
+    participation_id: 723,
+    participation: true/false/nil,
+    participations: [{
+      id: 123,
+      status: true,
+      user_id: 123,
+      user_name: "Hans-Peter Schmidt"
+    }, ... ],
+    event: {
+      id: 123,
+      category: "Training",
+      remark: "Pünktlich sein!",
+      place: "Vereinsheim, Musterstraße 1, Hamburg",
+      latitude: 53.75301,
+      longitude: 9.67407,
+      base_time: "20:00:00"
+    }
+  },
+  {
+    id: 123,
+    scheduled_to: "0000-00-00 00:00:00",
+    participation_id: 723,
+    participation: true/false/nil,
+    participations: [{
+      id: 123,
+      status: true,
+      user_id: 123,
+      user_name: "Hans-Peter Schmidt"
+    }, ... ],
+    event: {
+      id: 123,
+      category: "Training",
+      remark: "Pünktlich sein!",
+      place: "Vereinsheim, Musterstraße 1, Hamburg",
+      latitude: 53.75301,
+      longitude: 9.67407,
+      base_time: "20:00:00"
+    }
+  }, ...
+]

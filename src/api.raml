@@ -1,0 +1,266 @@
+#%RAML 0.8
+title: TEAM ORGA
+
+version: v1
+baseUri: http://teamorga.com/api/{version}
+mediaType: application/vnd.teamorga.v1+json
+
+documentation:
+  - title: Introduction
+    content: |
+      Welcome to the **TEAM ORGA** documentation, that describes the **API-
+      endpoints and JSON-formats** which enable you to send request and receive
+      responses from [teamorga.com](https://www.teamorga.com) application.
+
+      For testing You can trigger API requests on the command line via cURL like
+      that:
+
+      ```sh
+      $ curl -X POST http://teamorga.com/recurrences \
+             -H 'Content-Type: application/json' \
+             -H 'Accept: application/vnd.teamorga.v1+json' \
+             -d 'Authorization: Token token="s1dHdF-AldFMqKcR7AQgjVNNZOVT5zY5"' \
+      ```
+
+      Make sure to **send allways the correct media type and valid token in the
+      headers**, otherwise you will get an error!
+
+      All actions will be executed in the **context of the current_user** and
+      his specific rights!
+
+/api_keys:
+  displayName: AUTHENTICATION
+
+  description: |
+    Here the user manages token authentication of the API, e.g.
+    * requests and creates a token or
+    * destroys an existing token.
+
+  post:
+    description: |
+      Create a new ApiKey.
+
+      To trigger the behaviour at the command line do:
+
+      ```bash
+      $ curl -X POST http://teamorga.com/api_keys \
+             -H 'Content-Type: application/json' \
+             -H 'Accept: application/vnd.teamorga.v1+json' \
+             -d '{"user": {"email": "fritz@teamorga.com", "password": "foobar"}}' \
+      ```
+    body:
+      application/json:
+        example: |
+          {
+            "user":
+              {
+                "email": "fritz@teamorga.com",
+                "password": "foobar"
+              }
+          }
+    responses:
+      201:
+        description: Created
+        body:
+          application/json:
+            example: |
+              {
+                "id": 2,
+                "birthday": "1983-04-17",
+                "phone": "+49 150 123 45 67",
+                "email": "Fritz@teamorga.com",
+                "shirt_number": 10,
+                "access_token": "X5V5_ha5stUrzi6pgjpP1Q",
+                "access_until": "2015-08-20T00:00:00+02:00"
+              }
+      401:
+        description: Not authorized
+
+  /{id}:
+    securedBy: [token_authentication]
+    uriParameters:
+      id:
+        description: Account identifier
+        type: string
+    delete:
+      headers:
+        Authorization:
+          type: string
+          description: Token authentication header
+          example: |
+            Authorization: Token token=QWxhZGRpbjpvcGVuIHNlc2FtZQ==
+      description: Deletes the respective ApiKey.
+      responses:
+        204:
+          description: No Content
+        403:
+          description: Forbidden
+
+/recurrences:
+  displayName: EVENTS
+  securedBy: [token_authentication]
+  type:
+    readOnlyCollection:
+      exampleCollection: !include teamorga-include-recurrences.sample
+
+  /{recurrenceID}:
+    securedBy: [token_authentication]
+    type:
+      collection-item:
+        exampleItem: !include teamorga-include-recurrence-retrieve.sample
+
+    /participations:
+      post:
+
+      /{participationID}:
+        put:
+
+    /comments:
+      type:
+        collection:
+          exampleCollection: !include teamorga-include-comments.sample
+          exampleItem: !include teamorga-include-comment-new.sample
+
+/groups:
+  displayName: TEAMS
+  type:
+    readOnlyCollection:
+      exampleCollection: !include teamorga-include-groups.sample
+
+  /{groupID}:
+    type:
+      collection-item:
+        exampleItem: !include teamorga-include-group-retrieve.sample
+
+    /users:
+      type:
+        readOnlyCollection:
+          exampleCollection: !include teamorga-include-users.sample
+
+    /comments:
+      type:
+        readOnlyCollection:
+          exampleCollection: !include teamorga-include-comments.sample
+
+/users:
+  displayName: Profile
+
+  /{userID}:
+    type:
+      collection-item:
+        exampleItem: !include teamorga-include-user-retrieve.sample
+
+/birthdays:
+  displayName: Birthdays
+  type:
+    readOnlyCollection:
+      exampleCollection: !include teamorga-include-users.sample
+
+/comments:
+  displayName: Comments
+  type:
+    readOnlyCollection:
+      exampleCollection: !include teamorga-include-comments.sample
+
+  /{commentID}:
+    delete:
+
+
+schemas:
+ - comment: !include teamorga-include-comment.schema
+
+resourceTypes:
+  - readOnlyCollection:
+      description: |
+        Collection of available <<resourcePathName>> in the respective context.
+      get:
+        description: Get a list of <<resourcePathName>>.
+        responses:
+          200:
+            body:
+              application/json:
+                example: |
+                  <<exampleCollection>>
+  - collection:
+      description: |
+        Collection of available <<resourcePathName>> in the respective context.
+      get:
+        description: Get a list of <<resourcePathName>>.
+        responses:
+          200:
+            description: OK
+            body:
+              application/json:
+                example: |
+                  <<exampleCollection>>
+      post:
+        description: |
+          Add a new <<resourcePathName|!singularize>>.
+        body:
+          application/json:
+            schema: <<resourcePathName|!singularize>>
+            example: |
+              <<exampleItem>>
+        responses:
+          200:
+            body:
+              application/json:
+                example: |
+                  { "message": "The <<resourcePathName|!singularize>> has been properly entered" }
+  - collection-item:
+      description: Entity representing a <<resourcePathName|!singularize>>
+      get:
+        description: |
+          Get the <<resourcePathName|!singularize>>
+          with <<resourcePathName|!singularize>>Id =
+          {<<resourcePathName|!singularize>>Id}
+        responses:
+          200:
+            body:
+              application/json:
+                example: |
+                  <<exampleItem>>
+          404:
+            body:
+              application/json:
+                example: |
+                  {"message": "<<resourcePathName|!singularize>> not found" }
+
+securitySchemes:
+  - token_authentication:
+        description: |
+            TEAM ORGA requests token authentication for all API requests.
+        type: x-{other}
+        describedBy:
+            headers:
+                MediaType:
+                    type: string
+                    description: |
+                       Used to send a valid media type.
+                    example: |
+                       Accept: application/vnd.teamorga.v1+json
+                Authorization:
+                    type: string
+                    description: |
+                       Used to send a valid access token.
+                    example: |
+                       Authorization: Token token="s1dHdF-AldFMqKcR7AQgjVNNZOVT5zY5"
+            responses:
+                401:
+                    description: |
+                        Bad or expired token. This can happen if the user or Dropbox
+                        revoked or expired an access token. To fix, you should re-
+                        authenticate the user.
+                403:
+                    description: |
+                        Bad OAuth request (wrong consumer key, bad nonce, expired
+                        timestamp...). Unfortunately, re-authenticating the user won't help here.
+                471:
+                  body:
+                    application/json:
+                      schema: Error
+                      example: |
+                        {
+                          "code": "471",
+                          "message": "invalid api key"
+                        }
