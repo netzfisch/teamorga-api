@@ -27,5 +27,5 @@ build/Release
 node_modules
 
 # Template directory
-public
+build
 templates

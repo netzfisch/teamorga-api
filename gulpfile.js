@@ -3,7 +3,7 @@
 var gulp = require('gulp');
 
 var API_SPEC = 'src/api.raml';
-var API_DEST = 'public';
+var API_DEST = 'build';
 var API_HTML = 'index.html';
 
 var paths = {

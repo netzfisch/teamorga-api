@@ -209,9 +209,6 @@ documentation:
         exampleItem: !include teamorga-include-user-retrieve.sample
 
 
-schemas:
- - comment: !include teamorga-include-comment.schema
-
 resourceTypes:
   - readOnlyCollection:
       description: |
@@ -248,7 +245,6 @@ resourceTypes:
           !include teamorga-request-headers.raml
         body:
           application/json:
-            schema: <<resourcePathName|!singularize>>
             example: |
               <<exampleItem>>
         responses:
