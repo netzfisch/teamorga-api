@@ -4,29 +4,38 @@ title: TEAM ORGA
 version: v1
 baseUri: http://teamorga.com/api/{version}
 mediaType: application/vnd.teamorga.v1+json
+securedBy: [Token Authentication]
 
 documentation:
   - title: Introduction
     content: |
-      Welcome to the **TEAM ORGA** documentation, that describes the **API-
-      endpoints and JSON-formats** which enable you to send request and receive
-      responses from [teamorga.com](https://www.teamorga.com) application.
+      The documentation describes the **API-endpoints and JSON-formats** which
+      enable one to **send request** and **receive responses** from the
+      [TEAM ORGA](https://www.teamorga.com) API-endpoints.
 
-      For testing You can trigger API requests on the command line via cURL like
-      that:
+      Trigger an API requests on the command line via cURL like that:
 
       ```sh
-      $ curl -X POST http://teamorga.com/recurrences \
+      $ curl -X POST http://teamorga.com/api/recurrences \
              -H 'Content-Type: application/json' \
              -H 'Accept: application/vnd.teamorga.v1+json' \
-             -d 'Authorization: Token token="s1dHdF-AldFMqKcR7AQgjVNNZOVT5zY5"' \
+             -H 'Authorization: Token token="s1dHdF-AldFMqKcR7AQgjVNNZOVT5zY5"' \
       ```
 
-      Make sure to **send allways the correct media type and valid token in the
-      headers**, otherwise you will get an error!
+      Make sure to **send allways in the header**
 
-      All actions will be executed in the **context of the current_user** and
-      his specific rights!
+      * the accepted media type of the response body
+        `Accept: application/vnd.teamorga.v1+json` and
+      * a valid token `Authorization: Token token="s1dHdF-AldFMqKcR7AQgjVNNZOVT5zY5"`,
+
+      otherwise you will get an error!
+
+      Specifing the header **media type for the request body**
+      `Content-Type: application/json` is only needed for
+      **POST-/ PUT-requests**!
+
+      All actions will be executed in the **context of the** `current_user` and
+      responses will be based on the **specific current user rights**!
 
 /api_keys:
   displayName: AUTHENTICATION
@@ -37,17 +46,31 @@ documentation:
     * destroys an existing token.
 
   post:
+    securedBy: [null]
     description: |
       Create a new ApiKey.
 
-      To trigger the behaviour at the command line do:
+      Trigger the behaviour via cURL at the command line like that:
 
-      ```bash
+      ```sh
       $ curl -X POST http://teamorga.com/api_keys \
              -H 'Content-Type: application/json' \
              -H 'Accept: application/vnd.teamorga.v1+json' \
              -d '{"user": {"email": "fritz@teamorga.com", "password": "foobar"}}' \
       ```
+    headers:
+      ContentType:
+        description: |
+          Media type of the **request** body.
+        type: string
+        example: |
+          Content-Type: application/json
+      Accept:
+        description: |
+          Media type of the **response** body.
+        type: string
+        example: |
+          Accept: application/vnd.teamorga.v1+json
     body:
       application/json:
         example: |
@@ -77,19 +100,14 @@ documentation:
         description: Not authorized
 
   /{id}:
-    securedBy: [token_authentication]
     uriParameters:
       id:
         description: Account identifier
         type: string
     delete:
-      headers:
-        Authorization:
-          type: string
-          description: Token authentication header
-          example: |
-            Authorization: Token token=QWxhZGRpbjpvcGVuIHNlc2FtZQ==
       description: Deletes the respective ApiKey.
+      headers:
+        !include teamorga-default-headers.raml
       responses:
         204:
           description: No Content
@@ -98,22 +116,35 @@ documentation:
 
 /recurrences:
   displayName: EVENTS
-  securedBy: [token_authentication]
   type:
     readOnlyCollection:
       exampleCollection: !include teamorga-include-recurrences.sample
 
   /{recurrenceID}:
-    securedBy: [token_authentication]
     type:
       collection-item:
         exampleItem: !include teamorga-include-recurrence-retrieve.sample
 
     /participations:
       post:
+        description: Create a status for the recurrence participation.
+        headers:
+          !include teamorga-request-headers.raml
+        body:
+          application/json:
+            example: |
+              {
+                "participation":
+                  {
+                    "status": "false" or "true"
+                  }
+              }
 
       /{participationID}:
         put:
+          description: Toggle the status for the recurrence participation.
+          headers:
+            !include teamorga-request-headers.raml
 
     /comments:
       type:
@@ -132,7 +163,7 @@ documentation:
       collection-item:
         exampleItem: !include teamorga-include-group-retrieve.sample
 
-    /users:
+    /birthdays:
       type:
         readOnlyCollection:
           exampleCollection: !include teamorga-include-users.sample
@@ -142,13 +173,15 @@ documentation:
         readOnlyCollection:
           exampleCollection: !include teamorga-include-comments.sample
 
-/users:
-  displayName: Profile
+    /recurrences:
+      type:
+        readOnlyCollection:
+          exampleCollection: !include teamorga-include-recurrences.sample
 
-  /{userID}:
-    type:
-      collection-item:
-        exampleItem: !include teamorga-include-user-retrieve.sample
+    /users:
+      type:
+        readOnlyCollection:
+          exampleCollection: !include teamorga-include-users.sample
 
 /birthdays:
   displayName: Birthdays
@@ -164,6 +197,16 @@ documentation:
 
   /{commentID}:
     delete:
+      headers:
+        !include teamorga-default-headers.raml
+
+/users:
+  displayName: Profile
+
+  /{userID}:
+    type:
+      collection-item:
+        exampleItem: !include teamorga-include-user-retrieve.sample
 
 
 schemas:
@@ -175,17 +218,22 @@ resourceTypes:
         Collection of available <<resourcePathName>> in the respective context.
       get:
         description: Get a list of <<resourcePathName>>.
+        headers:
+          !include teamorga-default-headers.raml
         responses:
           200:
             body:
               application/json:
                 example: |
                   <<exampleCollection>>
+
   - collection:
       description: |
         Collection of available <<resourcePathName>> in the respective context.
       get:
         description: Get a list of <<resourcePathName>>.
+        headers:
+          !include teamorga-default-headers.raml
         responses:
           200:
             description: OK
@@ -196,6 +244,8 @@ resourceTypes:
       post:
         description: |
           Add a new <<resourcePathName|!singularize>>.
+        headers:
+          !include teamorga-request-headers.raml
         body:
           application/json:
             schema: <<resourcePathName|!singularize>>
@@ -214,6 +264,8 @@ resourceTypes:
           Get the <<resourcePathName|!singularize>>
           with <<resourcePathName|!singularize>>Id =
           {<<resourcePathName|!singularize>>Id}
+        headers:
+          !include teamorga-default-headers.raml
         responses:
           200:
             body:
@@ -227,40 +279,40 @@ resourceTypes:
                   {"message": "<<resourcePathName|!singularize>> not found" }
 
 securitySchemes:
-  - token_authentication:
-        description: |
-            TEAM ORGA requests token authentication for all API requests.
-        type: x-{other}
-        describedBy:
-            headers:
-                MediaType:
-                    type: string
-                    description: |
-                       Used to send a valid media type.
-                    example: |
-                       Accept: application/vnd.teamorga.v1+json
-                Authorization:
-                    type: string
-                    description: |
-                       Used to send a valid access token.
-                    example: |
-                       Authorization: Token token="s1dHdF-AldFMqKcR7AQgjVNNZOVT5zY5"
-            responses:
-                401:
-                    description: |
-                        Bad or expired token. This can happen if the user or Dropbox
-                        revoked or expired an access token. To fix, you should re-
-                        authenticate the user.
-                403:
-                    description: |
-                        Bad OAuth request (wrong consumer key, bad nonce, expired
-                        timestamp...). Unfortunately, re-authenticating the user won't help here.
-                471:
-                  body:
-                    application/json:
-                      schema: Error
-                      example: |
-                        {
-                          "code": "471",
-                          "message": "invalid api key"
-                        }
+  - Token Authentication:
+      description: |
+        TEAM ORGA requests token authentication for all API requests.
+      type: x-{other}
+      describedBy:
+        headers:
+          Accept:
+            description: |
+              The media type of the **response** body.
+            type: string
+            example: |
+              Accept: application/vnd.teamorga.v1+json
+          Authorization:
+            type: string
+            description: |
+              The valid access token.
+            example: |
+              Authorization: Token token="s1dHdF-AldFMqKcR7AQgjVNNZOVT5zY5"
+        responses:
+          401:
+            description: |
+              Bad or expired token. This can happen if the user or Dropbox
+              revoked or expired an access token. To fix, you should re-
+              authenticate the user.
+          403:
+            description: |
+              Bad OAuth request (wrong consumer key, bad nonce, expired
+              timestamp...). Unfortunately, re-authenticating the user won't help here.
+          471:
+            body:
+              application/json:
+                schema: Error
+                example: |
+                  {
+                    "code": "471",
+                    "message": "invalid api key"
+                  }
