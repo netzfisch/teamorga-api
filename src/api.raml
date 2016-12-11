@@ -139,12 +139,27 @@ documentation:
                     "status": "false" or "true"
                   }
               }
+        responses:
+          201:
+            description: Created
 
       /{participationID}:
         put:
           description: Toggle the status for the recurrence participation.
           headers:
             !include teamorga-request-headers.raml
+          responses:
+            200:
+              description: Ok
+              body:
+                application/json:
+                  example: |
+                    {
+                      "participation":
+                        {
+                          "status": "false" or "true"
+                        }
+                    }
 
     /comments:
       type:

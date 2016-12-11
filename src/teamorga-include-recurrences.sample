@@ -1,44 +1,36 @@
 [
   {
-    id: 123,
-    scheduled_to: "0000-00-00 00:00:00",
-    participation_id: 723,
-    participation: true/false/nil,
-    participations: [{
-      id: 123,
-      status: true,
-      user_id: 123,
-      user_name: "Hans-Peter Schmidt"
-    }, ... ],
-    event: {
-      id: 123,
-      category: "Training",
-      remark: "Pünktlich sein!",
-      place: "Vereinsheim, Musterstraße 1, Hamburg",
-      latitude: 53.75301,
-      longitude: 9.67407,
-      base_time: "20:00:00"
+    "id": 233,
+    "scheduled_to": "2015-10-24",
+    "participation_id": 30,
+    "participation": false,
+    "participations": [
+      {
+        "id": 28,
+        "status": true,
+        "user_id": 3,
+        "user_name": "Hans"
+      },
+      {
+        "id": 30,
+        "status": false,
+        "user_id": 2,
+        "user_name": "Fritz"
+      }
+    ],
+    "event": {
+      "id": 36,
+      "category": "Spieltag",
+      "remark": "",
+      "place": "Thedenstr.",
+      "latitude": 38.9426583,
+      "longitude": -94.83177839999999,
+      "base_time": "2000-01-01T15:06:00Z",
+      "group": {
+        "id": 1,
+        "name": "First Team"
+      }
     }
   },
-  {
-    id: 123,
-    scheduled_to: "0000-00-00 00:00:00",
-    participation_id: 723,
-    participation: true/false/nil,
-    participations: [{
-      id: 123,
-      status: true,
-      user_id: 123,
-      user_name: "Hans-Peter Schmidt"
-    }, ... ],
-    event: {
-      id: 123,
-      category: "Training",
-      remark: "Pünktlich sein!",
-      place: "Vereinsheim, Musterstraße 1, Hamburg",
-      latitude: 53.75301,
-      longitude: 9.67407,
-      base_time: "20:00:00"
-    }
-  }, ...
+  {...}
 ]
